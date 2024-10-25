@@ -11,10 +11,10 @@ public class Potion : MonoBehaviour
     private Vector2 currentPosition, targetPosition;
     public bool isMoving;
 
-    public Potion(int xIndex, int yIndex)
+    public void SetIndex(int x, int y)
     {
-        this.xIndex = xIndex;
-        this.yIndex = yIndex;
+        xIndex = x;
+        yIndex = y;
     }
 }
 
