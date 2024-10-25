@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -43,12 +43,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -108,7 +108,427 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: small Potions_0
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 208
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b71abcc1eef5b843b86fcdf2f506f29
+      internalID: -1317306094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_1
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 208
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: efeff87f958cd6e4fabf5c6c3cdbdc63
+      internalID: 1883788335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_2
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 208
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a931e161fc66f574e867dc88af65c7bb
+      internalID: -229978255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_3
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 208
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4bc115a35aad2aa42b1d12c5012a2d78
+      internalID: 544618019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_4
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 158
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2c96893d3f6b4a941a1a64769cbde443
+      internalID: 404595821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_5
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 158
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fb4c264efb8b60c4dae8bb03fd3f08bc
+      internalID: 299117218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_6
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 158
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 22ebd35f70ff58145a42b0fe07223841
+      internalID: -1577811972
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_7
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 158
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fc3562757d69ceb41b974dc675fe8432
+      internalID: 1092181798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_8
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 108
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad3b5c0044c97af44a5c9af85b9465cd
+      internalID: -734342393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_9
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 108
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 561ee060abbf2694a8469408b41c2245
+      internalID: -1172541542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_10
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 108
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 715f10b73225cba4c89061edba6e1a50
+      internalID: -441805121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_11
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 108
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 016e01af718d1bf46a9d5aae5f35b48e
+      internalID: -1247693204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_12
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 58
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2662bf17197b6a046aa3c3cb8c7b28b6
+      internalID: 1210955261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_13
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 58
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba92f4f9bd23f7d488b7a109f6ff6115
+      internalID: 2130979219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_14
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 58
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63210286ac211c74980bf5e3ff6a112e
+      internalID: 1107636726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_15
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 58
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f55de92d9bc45464d806f8c1472cc72d
+      internalID: -1932209065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_16
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 8
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dc1240b774b610945a63a4d9fbcb78a5
+      internalID: 1627640552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_17
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 8
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4155dda2cc43f94a90f7361f94dccac
+      internalID: 1432458681
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_18
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 8
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c19d476ca705754f95402439db8ccd7
+      internalID: 315889374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: small Potions_19
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 8
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 19b24aa6e49b796448d7e4dfe165ff54
+      internalID: -447182775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -119,7 +539,27 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      small Potions_0: -1317306094
+      small Potions_1: 1883788335
+      small Potions_10: -441805121
+      small Potions_11: -1247693204
+      small Potions_12: 1210955261
+      small Potions_13: 2130979219
+      small Potions_14: 1107636726
+      small Potions_15: -1932209065
+      small Potions_16: 1627640552
+      small Potions_17: 1432458681
+      small Potions_18: 315889374
+      small Potions_19: -447182775
+      small Potions_2: -229978255
+      small Potions_3: 544618019
+      small Potions_4: 404595821
+      small Potions_5: 299117218
+      small Potions_6: -1577811972
+      small Potions_7: 1092181798
+      small Potions_8: -734342393
+      small Potions_9: -1172541542
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
