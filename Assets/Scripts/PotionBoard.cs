@@ -73,14 +73,14 @@ public class PotionBoard : MonoBehaviour
                 {
                     if (!node.potion.IsMatched)
                     {
-                        MatchResult matchPotions = IsConnected(node.potion);
-                        if (matchPotions.connectedPotions.Count >= 3)
+                        MatchResult matchedPotions = IsConnected(node.potion);
+                        if (matchedPotions.connectedPotions.Count >= 3)
                         {
-                            // TODO complex matching
+                            matchedPotions = CheckSuperMatch(matchedPotions);
 
                             hasMatched = true;
-                            potionsToRemove.AddRange(matchPotions.connectedPotions);
-                            foreach (Potion p in matchPotions.connectedPotions)
+                            potionsToRemove.AddRange(matchedPotions.connectedPotions);
+                            foreach (Potion p in matchedPotions.connectedPotions)
                                 p.IsMatched = true;
                         }
                     }
@@ -88,6 +88,44 @@ public class PotionBoard : MonoBehaviour
             }
 
         return hasMatched;
+    }
+
+    MatchResult CheckSuperMatch(MatchResult matchedPotions)
+    {
+        Vector2Int direction1, direction2;
+        if (
+            matchedPotions.direction == MatchDirection.Horizontal ||
+            matchedPotions.direction == MatchDirection.LongHorizontal
+        )
+        {
+            direction1 = new Vector2Int(0, 1);
+            direction2 = new Vector2Int(0, -1);
+        }
+        else if (
+            matchedPotions.direction == MatchDirection.Vertical ||
+            matchedPotions.direction == MatchDirection.LongVertical
+        )
+        {
+            direction1 = new Vector2Int(1, 0);
+            direction2 = new Vector2Int(-1, 0);
+        }
+        else return matchedPotions;
+
+        foreach (Potion potion in matchedPotions.connectedPotions)
+        {
+            List<Potion> extraConnections = new();
+            CheckDirection(potion, direction1, extraConnections);
+            CheckDirection(potion, direction2, extraConnections);
+
+            if (extraConnections.Count >= 2)
+            {
+                matchedPotions.connectedPotions.AddRange(extraConnections);
+                matchedPotions.direction = MatchDirection.Super;
+                return matchedPotions;
+            }
+        }
+
+        return matchedPotions;
     }
 
     MatchResult IsConnected(Potion potion)
@@ -230,7 +268,7 @@ public class PotionBoard : MonoBehaviour
     #endregion
 }
 
-public class MatchResult
+public struct MatchResult
 {
     public List<Potion> connectedPotions;
     public MatchDirection direction;
