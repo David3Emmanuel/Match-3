@@ -4,16 +4,19 @@ using UnityEngine;
 
 public class PotionBoard : MonoBehaviour
 {
+    // Editor fields
     public int width = 6;
     public int height = 8;
-    public float SpacingX { get; private set; }
-    public float SpacingY { get; private set; }
-
     public GameObject[] potions;
-    public Node[,] potionBoard;
     public ArrayLayout layout;
 
+    // Public properties
+    public Node[,] Nodes { get; private set; }
     public static PotionBoard Instance { get; private set; }
+    public Potion SelectedPotion { get; set; }
+
+    private bool isSwapping, isMatching;
+    private bool IsProcessing => isSwapping || isMatching;
 
     void Awake() { Instance = this; }
 
@@ -21,17 +24,17 @@ public class PotionBoard : MonoBehaviour
 
     void InitializeBoard()
     {
-        potionBoard = new Node[width, height];
-        SpacingX = (float)(width - 1) / 2;
-        SpacingY = ((float)(height - 1) / 2) + 1;
+        Nodes = new Node[width, height];
+        float spacingX = (float)(width - 1) / 2;
+        float spacingY = ((float)(height - 1) / 2) + 1;
 
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
             {
-                Vector2 position = new(x - SpacingX, y - SpacingY);
+                Vector2 position = new(x - spacingX, y - spacingY);
                 if (layout.rows[y].row[x])
                 {
-                    potionBoard[x, y] = new Node(false, null);
+                    Nodes[x, y] = new Node(false, null);
                 }
                 else
                 {
@@ -40,14 +43,14 @@ public class PotionBoard : MonoBehaviour
                     newPotion.transform.parent = transform;
                     Potion potion = newPotion.GetComponent<Potion>();
                     potion.SetIndex(x, y);
-                    potionBoard[x, y] = new Node(true, potion);
+                    Nodes[x, y] = new Node(true, potion);
                 }
             }
 
         if (CheckBoard())
         {
-            // Uninstantiate game objects
-            foreach (Node node in potionBoard)
+            // Uninstantiate game Pbjects
+            foreach (Node node in Nodes)
             {
                 if (node != null && node.potion != null)
                     Destroy(node.potion.gameObject);
@@ -56,6 +59,7 @@ public class PotionBoard : MonoBehaviour
         }
     }
 
+    #region Board Logic
     public bool CheckBoard()
     {
         bool hasMatched = false;
@@ -64,19 +68,20 @@ public class PotionBoard : MonoBehaviour
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
             {
-                Node node = potionBoard[x, y];
+                Node node = Nodes[x, y];
                 if (node.isUsable)
                 {
-                    if (!node.potion.isMatched)
+                    if (!node.potion.IsMatched)
                     {
                         MatchResult matchPotions = IsConnected(node.potion);
                         if (matchPotions.connectedPotions.Count >= 3)
                         {
                             // TODO complex matching
+
                             hasMatched = true;
                             potionsToRemove.AddRange(matchPotions.connectedPotions);
                             foreach (Potion p in matchPotions.connectedPotions)
-                                p.isMatched = true;
+                                p.IsMatched = true;
                         }
                     }
                 }
@@ -147,9 +152,9 @@ public class PotionBoard : MonoBehaviour
 
         while (x >= 0 && x < width && y >= 0 && y < height)
         {
-            Node node = potionBoard[x, y];
+            Node node = Nodes[x, y];
             if (!node.isUsable) break;
-            if (!node.potion.isMatched && node.potion.potionType == potion.potionType)
+            if (!node.potion.IsMatched && node.potion.potionType == potion.potionType)
             {
                 connectedPotions.Add(node.potion);
                 x += direction.x;
@@ -158,6 +163,71 @@ public class PotionBoard : MonoBehaviour
             else break;
         }
     }
+    #endregion
+
+    #region Swap Logic
+    public void SelectPotion(Potion potion)
+    {
+        if (IsProcessing) return;
+
+        if (SelectedPotion == null) SelectedPotion = potion;
+        else if (SelectedPotion == potion) SelectedPotion = null;
+        else if (!IsAdjacentWithSelected(potion)) SelectedPotion = potion;
+        else
+        {
+            isSwapping = true;
+            Node selectedNode = Nodes[SelectedPotion.xIndex, SelectedPotion.yIndex];
+            Node targetNode = Nodes[potion.xIndex, potion.yIndex];
+
+            // Swap nodes
+            Nodes[SelectedPotion.xIndex, SelectedPotion.yIndex] = targetNode;
+            Nodes[potion.xIndex, potion.yIndex] = selectedNode;
+
+            // Swap indices
+            int tempX = SelectedPotion.xIndex;
+            int tempY = SelectedPotion.yIndex;
+            SelectedPotion.SetIndex(potion.xIndex, potion.yIndex);
+            potion.SetIndex(tempX, tempY);
+
+            StartCoroutine(SwapPotions(SelectedPotion, potion));
+            StartCoroutine(CheckMatches(
+                () => StartCoroutine(SwapPotions(SelectedPotion, potion))
+            ));
+        }
+    }
+
+    IEnumerator SwapPotions(Potion potion1, Potion potion2)
+    {
+        Vector2 position1 = potion1.transform.position;
+        Vector2 position2 = potion2.transform.position;
+        StartCoroutine(potion1.Move(position2, 0.1f));
+        StartCoroutine(potion2.Move(position1, 0.1f));
+
+        while (potion1.IsMoving || potion2.IsMoving)
+            yield return null;
+
+        SelectedPotion = null;
+        isSwapping = false;
+    }
+
+    IEnumerator CheckMatches(System.Action revertSwap)
+    {
+        while (isSwapping) yield return null;
+
+        isMatching = true;
+        if (CheckBoard())
+        { }
+        else revertSwap();
+
+        isMatching = false;
+    }
+
+    bool IsAdjacentWithSelected(Potion potion)
+    {
+        if (SelectedPotion == null) return false;
+        return Mathf.Abs(SelectedPotion.xIndex - potion.xIndex) + Mathf.Abs(SelectedPotion.yIndex - potion.yIndex) == 1;
+    }
+    #endregion
 }
 
 public class MatchResult

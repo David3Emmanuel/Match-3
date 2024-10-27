@@ -261,6 +261,7 @@ MonoBehaviour:
     - row: 000000000000
     - row: 000000000000
     - row: 000000000000
+  SelectedPotion: {fileID: 0}
 --- !u!4 &1229261449
 Transform:
   m_ObjectHideFlags: 0
