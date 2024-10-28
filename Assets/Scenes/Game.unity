@@ -1205,24 +1205,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525eec478109667479aad1754ce1fad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 6
-  height: 8
+  level: {fileID: 11400000, guid: e2cccf1f9538236449f3a79df60dfe7c, type: 2}
   potions:
   - {fileID: 8791860195176064404, guid: f4d9155088874874b9ec556c69f2699b, type: 3}
   - {fileID: 8838379980197889491, guid: 8d1180057010b7442a1f3228ff7a0b90, type: 3}
   - {fileID: 2188263921888166538, guid: 561ed0e7ede3433488aadb4113bd2594, type: 3}
   - {fileID: 6265103727696392116, guid: b9abe72553c904642a4b2498e9647fdc, type: 3}
   - {fileID: 5468670020802726675, guid: 191d405a6d7a4ba418171aecffca99d0, type: 3}
-  layout:
-    rows:
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
   refillDelay: 0
   refillSpeed: 5
   cascadeSpeed: 3

@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class PotionBoard : MonoBehaviour
 {
-    // Editor fields
-    public int width = 6;
-    public int height = 8;
+    public Level level;
     public GameObject[] potions;
-    public ArrayLayout layout;
     public float refillDelay = 0f;
     public float refillSpeed = 5.0f;
     public float cascadeSpeed = 3.0f;
@@ -18,10 +15,10 @@ public class PotionBoard : MonoBehaviour
     public Node[,] Nodes { get; private set; }
     public static PotionBoard Instance { get; private set; }
     public Potion SelectedPotion { get; set; }
+    public bool IsProcessing => isMatching || isCascading || IsMoving || IsSpawning;
 
     // Private properties
     private bool isMatching, isCascading;
-    private bool IsProcessing => isMatching || isCascading || IsMoving || IsSpawning;
     private float spacingX, spacingY;
     bool IsMoving
     {
@@ -50,14 +47,14 @@ public class PotionBoard : MonoBehaviour
 
     void InitializeBoard()
     {
-        Nodes = new Node[width, height];
-        spacingX = (float)(width - 1) / 2;
-        spacingY = (float)(height - 1) / 2;
+        Nodes = new Node[level.width, level.height];
+        spacingX = (float)(level.width - 1) / 2;
+        spacingY = (float)(level.height - 1) / 2;
 
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
+        for (int y = 0; y < level.height; y++)
+            for (int x = 0; x < level.width; x++)
             {
-                if (layout.rows[y].row[x])
+                if (level.layout.rows[y].row[x])
                 {
                     Nodes[x, y] = new Node();
                 }
@@ -94,8 +91,8 @@ public class PotionBoard : MonoBehaviour
 
         List<Potion> allMatchedPotions = new();
 
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
+        for (int y = 0; y < level.height; y++)
+            for (int x = 0; x < level.width; x++)
             {
                 Node node = Nodes[x, y];
                 if (node.isUsable)
@@ -221,7 +218,7 @@ public class PotionBoard : MonoBehaviour
         int x = potion.xIndex + direction.x;
         int y = potion.yIndex + direction.y;
 
-        while (x >= 0 && x < width && y >= 0 && y < height)
+        while (x >= 0 && x < level.width && y >= 0 && y < level.height)
         {
             Node node = Nodes[x, y];
             if (!node.isUsable) break;
@@ -291,6 +288,7 @@ public class PotionBoard : MonoBehaviour
 
     IEnumerator CheckMatches(System.Action revertSwap)
     {
+        GameManager.Instance.UseMove();
         while (IsMoving) yield return null;
 
         isMatching = true;
@@ -304,7 +302,6 @@ public class PotionBoard : MonoBehaviour
 
         isMatching = false;
         SelectedPotion = null;
-        GameManager.Instance.UseMove();
         OrderPotionsInHierarchy();
     }
 
@@ -338,8 +335,8 @@ public class PotionBoard : MonoBehaviour
         yield return new WaitForSeconds(refillDelay);
 
 
-        for (int x = 0; x < width; x++)
-            for (int y = 0; y < height; y++)
+        for (int x = 0; x < level.width; x++)
+            for (int y = 0; y < level.height; y++)
                 if (Nodes[x, y].potion == null)
                     RefillPotion(x, y);
 
@@ -350,10 +347,10 @@ public class PotionBoard : MonoBehaviour
     void RefillPotion(int x, int y)
     {
         int yOffSet = 1;
-        while (y + yOffSet < height && Nodes[x, y + yOffSet].potion == null)
+        while (y + yOffSet < level.height && Nodes[x, y + yOffSet].potion == null)
             yOffSet++;
 
-        if (y + yOffSet == height) SpawnPotionAtTop(x);
+        if (y + yOffSet == level.height) SpawnPotionAtTop(x);
         else
         {
             Potion potionAbove = Nodes[x, y + yOffSet].potion;
@@ -376,7 +373,7 @@ public class PotionBoard : MonoBehaviour
         // Create new potion
         int randomIndex = Random.Range(0, potions.Length);
         GameObject newPotionObject = Instantiate(potions[randomIndex], transform);
-        newPotionObject.transform.localPosition = new Vector2(x - spacingX, height - 1 + targetRow - spacingY);
+        newPotionObject.transform.localPosition = new Vector2(x - spacingX, level.height - 1 + targetRow - spacingY);
 
         // Set index and add to board
         Potion newPotion = newPotionObject.GetComponent<Potion>();
@@ -398,12 +395,12 @@ public class PotionBoard : MonoBehaviour
 
     int FindIndexOfLowestNull(int x)
     {
-        for (int y = 0; y < height; y++)
+        for (int y = 0; y < level.height; y++)
             if (Nodes[x, y].potion == null)
                 return y;
 
         Debug.LogError("No null found in column " + x);
-        return height;
+        return level.height;
     }
     #endregion
 }
