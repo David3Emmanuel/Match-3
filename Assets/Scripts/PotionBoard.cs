@@ -19,10 +19,10 @@ public class PotionBoard : MonoBehaviour
     public static PotionBoard Instance { get; private set; }
     public Potion SelectedPotion { get; set; }
 
+    // Private properties
     private bool isMatching, isCascading;
     private bool IsProcessing => isMatching || isCascading || IsMoving || IsSpawning;
     private float spacingX, spacingY;
-
     bool IsMoving
     {
         get
@@ -33,7 +33,6 @@ public class PotionBoard : MonoBehaviour
             return false;
         }
     }
-
     bool IsSpawning
     {
         get
@@ -53,7 +52,7 @@ public class PotionBoard : MonoBehaviour
     {
         Nodes = new Node[width, height];
         spacingX = (float)(width - 1) / 2;
-        spacingY = ((float)(height - 1) / 2) + 1;
+        spacingY = (float)(height - 1) / 2;
 
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
