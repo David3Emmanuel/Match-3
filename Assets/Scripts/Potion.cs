@@ -20,17 +20,17 @@ public class Potion : MonoBehaviour
     public IEnumerator MoveWithDuration(Vector2 targetPosition, float duration)
     {
         IsMoving = true;
-        Vector2 startPosition = transform.position;
+        Vector2 startPosition = transform.localPosition;
         float time = 0f;
 
         while (time < duration)
         {
-            transform.position = Vector2.Lerp(startPosition, targetPosition, time / duration);
+            transform.localPosition = Vector2.Lerp(startPosition, targetPosition, time / duration);
             time += Time.deltaTime;
             yield return null;
         }
 
-        transform.position = targetPosition;
+        transform.localPosition = targetPosition;
         IsMoving = false;
     }
 
@@ -39,26 +39,22 @@ public class Potion : MonoBehaviour
         if (this == null) yield break;
 
         IsMoving = true;
-        Vector2 startPosition = transform.position;
         float time = 0f;
 
-        while (Vector2.Distance(transform.position, targetPosition) > 0.1f)
+        while (Vector2.Distance(transform.localPosition, targetPosition) > 0.1f)
         {
-            transform.position = Vector2.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+            transform.localPosition = Vector2.MoveTowards(transform.localPosition, targetPosition, speed * Time.deltaTime);
             time += Time.deltaTime;
             yield return null;
             if (this == null) break;
         }
 
-        if (this != null) transform.position = targetPosition;
+        if (this != null) transform.localPosition = targetPosition;
         IsMoving = false;
     }
 
     void OnMouseDown()
-    {
-        PotionBoard.Instance.SelectPotion(this);
-        Debug.DrawLine(Vector3.zero, transform.position, Color.red, 1f);
-    }
+    { PotionBoard.Instance.SelectPotion(this); }
 }
 
 public enum PotionType

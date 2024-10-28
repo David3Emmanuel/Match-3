@@ -57,7 +57,6 @@ public class PotionBoard : MonoBehaviour
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
             {
-                Vector2 position = new(x - spacingX, y - spacingY);
                 if (layout.rows[y].row[x])
                 {
                     Nodes[x, y] = new Node();
@@ -65,12 +64,13 @@ public class PotionBoard : MonoBehaviour
                 else
                 {
                     int randomIndex = Random.Range(0, potions.Length);
-                    GameObject newPotion = Instantiate(potions[randomIndex], position, Quaternion.identity);
-                    newPotion.transform.parent = transform;
-                    Potion potion = newPotion.GetComponent<Potion>();
-                    potion.SetIndex(x, y);
-                    potion.HasSpawned = true;
-                    Nodes[x, y] = new Node { isUsable = true, potion = potion };
+                    GameObject newPotionObject = Instantiate(potions[randomIndex], transform);
+                    newPotionObject.transform.localPosition = new Vector2(x - spacingX, y - spacingY);
+
+                    Potion newPotion = newPotionObject.GetComponent<Potion>();
+                    newPotion.SetIndex(x, y);
+                    newPotion.HasSpawned = true;
+                    Nodes[x, y] = new Node { isUsable = true, potion = newPotion };
                 }
             }
 
@@ -78,10 +78,9 @@ public class PotionBoard : MonoBehaviour
         {
             // Uninstantiate game Objects
             foreach (Node node in Nodes)
-            {
                 if (node.potion != null)
                     Destroy(node.potion.gameObject);
-            }
+
             InitializeBoard();
         }
     }
@@ -235,12 +234,19 @@ public class PotionBoard : MonoBehaviour
             else break;
         }
     }
+
+    void OrderPotionsInHierarchy()
+    {
+        foreach (Node node in Nodes)
+            if (node.potion != null)
+                node.potion.transform.SetAsLastSibling();
+    }
     #endregion
 
     #region Swap Logic
     public void SelectPotion(Potion potion)
     {
-        if (IsProcessing) return;
+        if (IsProcessing || GameManager.Instance.GameOver) return;
 
         if (SelectedPotion == null) SelectedPotion = potion;
         else if (SelectedPotion == potion) SelectedPotion = null;
@@ -274,8 +280,8 @@ public class PotionBoard : MonoBehaviour
 
     IEnumerator SwapPotionsPhysically(Potion potion1, Potion potion2)
     {
-        Vector2 position1 = potion1.transform.position;
-        Vector2 position2 = potion2.transform.position;
+        Vector2 position1 = potion1.transform.localPosition;
+        Vector2 position2 = potion2.transform.localPosition;
         StartCoroutine(potion1.MoveWithDuration(position2, swapDuration));
         StartCoroutine(potion2.MoveWithDuration(position1, swapDuration));
 
@@ -290,10 +296,16 @@ public class PotionBoard : MonoBehaviour
         isMatching = true;
         if (CheckBoard())
             yield return RemoveAndRefill();
-        else revertSwap();
+        else
+        {
+            revertSwap();
+            yield break;
+        }
 
         isMatching = false;
         SelectedPotion = null;
+        GameManager.Instance.UseMove();
+        OrderPotionsInHierarchy();
     }
 
     bool IsAdjacentWithSelected(Potion potion)
@@ -320,9 +332,10 @@ public class PotionBoard : MonoBehaviour
         {
             Nodes[potion.xIndex, potion.yIndex].potion = null;
             Destroy(potion.gameObject);
+            GameManager.Instance.AddPoints(1);
         }
 
-            yield return new WaitForSeconds(refillDelay);
+        yield return new WaitForSeconds(refillDelay);
 
 
         for (int x = 0; x < width; x++)
@@ -341,7 +354,8 @@ public class PotionBoard : MonoBehaviour
             yOffSet++;
 
         if (y + yOffSet == height) SpawnPotionAtTop(x);
-        else {
+        else
+        {
             Potion potionAbove = Nodes[x, y + yOffSet].potion;
 
             // Move in memory
@@ -361,9 +375,8 @@ public class PotionBoard : MonoBehaviour
 
         // Create new potion
         int randomIndex = Random.Range(0, potions.Length);
-        Vector2 spawnPosition = new(x - spacingX, (height-1 + targetRow) - spacingY);
-        GameObject newPotionObject = Instantiate(potions[randomIndex], spawnPosition, Quaternion.identity);
-        newPotionObject.transform.parent = transform;
+        GameObject newPotionObject = Instantiate(potions[randomIndex], transform);
+        newPotionObject.transform.localPosition = new Vector2(x - spacingX, height - 1 + targetRow - spacingY);
 
         // Set index and add to board
         Potion newPotion = newPotionObject.GetComponent<Potion>();
