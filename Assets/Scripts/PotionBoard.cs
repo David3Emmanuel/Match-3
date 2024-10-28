@@ -9,14 +9,41 @@ public class PotionBoard : MonoBehaviour
     public int height = 8;
     public GameObject[] potions;
     public ArrayLayout layout;
+    public float refillDelay = 0f;
+    public float refillSpeed = 5.0f;
+    public float cascadeSpeed = 3.0f;
+    public float swapDuration = 0.1f;
 
     // Public properties
     public Node[,] Nodes { get; private set; }
     public static PotionBoard Instance { get; private set; }
     public Potion SelectedPotion { get; set; }
 
-    private bool isSwapping, isMatching;
-    private bool IsProcessing => isSwapping || isMatching;
+    private bool isMatching, isCascading;
+    private bool IsProcessing => isMatching || isCascading || IsMoving || IsSpawning;
+    private float spacingX, spacingY;
+
+    bool IsMoving
+    {
+        get
+        {
+            foreach (Node node in Nodes)
+                if (node.potion != null && node.potion.IsMoving)
+                    return true;
+            return false;
+        }
+    }
+
+    bool IsSpawning
+    {
+        get
+        {
+            foreach (Node node in Nodes)
+                if (node.potion != null && !node.potion.HasSpawned)
+                    return true;
+            return false;
+        }
+    }
 
     void Awake() { Instance = this; }
 
@@ -25,8 +52,8 @@ public class PotionBoard : MonoBehaviour
     void InitializeBoard()
     {
         Nodes = new Node[width, height];
-        float spacingX = (float)(width - 1) / 2;
-        float spacingY = ((float)(height - 1) / 2) + 1;
+        spacingX = (float)(width - 1) / 2;
+        spacingY = ((float)(height - 1) / 2) + 1;
 
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
@@ -34,7 +61,7 @@ public class PotionBoard : MonoBehaviour
                 Vector2 position = new(x - spacingX, y - spacingY);
                 if (layout.rows[y].row[x])
                 {
-                    Nodes[x, y] = new Node(false, null);
+                    Nodes[x, y] = new Node();
                 }
                 else
                 {
@@ -43,16 +70,17 @@ public class PotionBoard : MonoBehaviour
                     newPotion.transform.parent = transform;
                     Potion potion = newPotion.GetComponent<Potion>();
                     potion.SetIndex(x, y);
-                    Nodes[x, y] = new Node(true, potion);
+                    potion.HasSpawned = true;
+                    Nodes[x, y] = new Node { isUsable = true, potion = potion };
                 }
             }
 
         if (CheckBoard())
         {
-            // Uninstantiate game Pbjects
+            // Uninstantiate game Objects
             foreach (Node node in Nodes)
             {
-                if (node != null && node.potion != null)
+                if (node.potion != null)
                     Destroy(node.potion.gameObject);
             }
             InitializeBoard();
@@ -60,10 +88,13 @@ public class PotionBoard : MonoBehaviour
     }
 
     #region Board Logic
-    public bool CheckBoard()
+    public List<Potion> GetMatchedPotions()
     {
-        bool hasMatched = false;
-        List<Potion> potionsToRemove = new();
+        foreach (Node node in Nodes)
+            if (node.potion != null)
+                node.potion.IsMatched = false;
+
+        List<Potion> allMatchedPotions = new();
 
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
@@ -78,8 +109,7 @@ public class PotionBoard : MonoBehaviour
                         {
                             matchedPotions = CheckSuperMatch(matchedPotions);
 
-                            hasMatched = true;
-                            potionsToRemove.AddRange(matchedPotions.connectedPotions);
+                            allMatchedPotions.AddRange(matchedPotions.connectedPotions);
                             foreach (Potion p in matchedPotions.connectedPotions)
                                 p.IsMatched = true;
                         }
@@ -87,7 +117,12 @@ public class PotionBoard : MonoBehaviour
                 }
             }
 
-        return hasMatched;
+        return allMatchedPotions;
+    }
+
+    public bool CheckBoard()
+    {
+        return GetMatchedPotions().Count > 0;
     }
 
     MatchResult CheckSuperMatch(MatchResult matchedPotions)
@@ -213,57 +248,150 @@ public class PotionBoard : MonoBehaviour
         else if (!IsAdjacentWithSelected(potion)) SelectedPotion = potion;
         else
         {
-            isSwapping = true;
-            Node selectedNode = Nodes[SelectedPotion.xIndex, SelectedPotion.yIndex];
-            Node targetNode = Nodes[potion.xIndex, potion.yIndex];
-
-            // Swap nodes
-            Nodes[SelectedPotion.xIndex, SelectedPotion.yIndex] = targetNode;
-            Nodes[potion.xIndex, potion.yIndex] = selectedNode;
-
-            // Swap indices
-            int tempX = SelectedPotion.xIndex;
-            int tempY = SelectedPotion.yIndex;
-            SelectedPotion.SetIndex(potion.xIndex, potion.yIndex);
-            potion.SetIndex(tempX, tempY);
-
-            StartCoroutine(SwapPotions(SelectedPotion, potion));
+            SwapPotions(SelectedPotion, potion);
             StartCoroutine(CheckMatches(
-                () => StartCoroutine(SwapPotions(SelectedPotion, potion))
+                () => SwapPotions(SelectedPotion, potion)
             ));
         }
     }
 
-    IEnumerator SwapPotions(Potion potion1, Potion potion2)
+    void SwapPotions(Potion potion1, Potion potion2)
+    {
+        Node selectedNode = Nodes[potion1.xIndex, potion1.yIndex];
+        Node targetNode = Nodes[potion2.xIndex, potion2.yIndex];
+
+        // Swap nodes
+        Nodes[potion1.xIndex, potion1.yIndex] = targetNode;
+        Nodes[potion2.xIndex, potion2.yIndex] = selectedNode;
+
+        // Swap indices
+        int tempX = potion1.xIndex;
+        int tempY = potion1.yIndex;
+        potion1.SetIndex(potion2.xIndex, potion2.yIndex);
+        potion2.SetIndex(tempX, tempY);
+
+        StartCoroutine(SwapPotionsPhysically(potion1, potion2));
+    }
+
+    IEnumerator SwapPotionsPhysically(Potion potion1, Potion potion2)
     {
         Vector2 position1 = potion1.transform.position;
         Vector2 position2 = potion2.transform.position;
-        StartCoroutine(potion1.Move(position2, 0.1f));
-        StartCoroutine(potion2.Move(position1, 0.1f));
+        StartCoroutine(potion1.MoveWithDuration(position2, swapDuration));
+        StartCoroutine(potion2.MoveWithDuration(position1, swapDuration));
 
         while (potion1.IsMoving || potion2.IsMoving)
             yield return null;
-
-        SelectedPotion = null;
-        isSwapping = false;
     }
 
     IEnumerator CheckMatches(System.Action revertSwap)
     {
-        while (isSwapping) yield return null;
+        while (IsMoving) yield return null;
 
         isMatching = true;
         if (CheckBoard())
-        { }
+            yield return RemoveAndRefill();
         else revertSwap();
 
         isMatching = false;
+        SelectedPotion = null;
     }
 
     bool IsAdjacentWithSelected(Potion potion)
     {
         if (SelectedPotion == null) return false;
         return Mathf.Abs(SelectedPotion.xIndex - potion.xIndex) + Mathf.Abs(SelectedPotion.yIndex - potion.yIndex) == 1;
+    }
+    #endregion
+
+    #region Cascading Logic
+    IEnumerator RemoveAndRefill()
+    {
+        while (CheckBoard())
+        {
+            while (isCascading || IsSpawning) yield return null;
+            yield return RemoveMatchedPotions();
+        }
+    }
+
+    IEnumerator RemoveMatchedPotions()
+    {
+        isCascading = true;
+        foreach (Potion potion in GetMatchedPotions())
+        {
+            Nodes[potion.xIndex, potion.yIndex].potion = null;
+            Destroy(potion.gameObject);
+        }
+
+            yield return new WaitForSeconds(refillDelay);
+
+
+        for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+                if (Nodes[x, y].potion == null)
+                    RefillPotion(x, y);
+
+        while (IsMoving) yield return null;
+        isCascading = false;
+    }
+
+    void RefillPotion(int x, int y)
+    {
+        int yOffSet = 1;
+        while (y + yOffSet < height && Nodes[x, y + yOffSet].potion == null)
+            yOffSet++;
+
+        if (y + yOffSet == height) SpawnPotionAtTop(x);
+        else {
+            Potion potionAbove = Nodes[x, y + yOffSet].potion;
+
+            // Move in memory
+            potionAbove.SetIndex(x, y);
+            Nodes[x, y].potion = potionAbove;
+            Nodes[x, y + yOffSet].potion = null;
+
+            // Move in scene
+            Vector2 targetPosition = new(x - spacingX, y - spacingY);
+            StartCoroutine(potionAbove.MoveWithSpeed(targetPosition, cascadeSpeed));
+        }
+    }
+
+    void SpawnPotionAtTop(int x)
+    {
+        int targetRow = FindIndexOfLowestNull(x);
+
+        // Create new potion
+        int randomIndex = Random.Range(0, potions.Length);
+        Vector2 spawnPosition = new(x - spacingX, (height-1 + targetRow) - spacingY);
+        GameObject newPotionObject = Instantiate(potions[randomIndex], spawnPosition, Quaternion.identity);
+        newPotionObject.transform.parent = transform;
+
+        // Set index and add to board
+        Potion newPotion = newPotionObject.GetComponent<Potion>();
+        newPotion.HasSpawned = false;
+        newPotion.SetIndex(x, targetRow);
+        Nodes[x, targetRow] = new Node { isUsable = true, potion = newPotion };
+
+        // Move potion to target position
+        Vector2 targetPosition = new(x - spacingX, targetRow - spacingY);
+        StartCoroutine(MoveSpawnedPotion(newPotion, targetPosition));
+    }
+
+    IEnumerator MoveSpawnedPotion(Potion potion, Vector2 targetPosition)
+    {
+        while (isCascading) yield return null;
+        yield return potion.MoveWithSpeed(targetPosition, refillSpeed);
+        potion.HasSpawned = true;
+    }
+
+    int FindIndexOfLowestNull(int x)
+    {
+        for (int y = 0; y < height; y++)
+            if (Nodes[x, y].potion == null)
+                return y;
+
+        Debug.LogError("No null found in column " + x);
+        return height;
     }
     #endregion
 }
@@ -282,4 +410,10 @@ public enum MatchDirection
     LongHorizontal,
     Super,
     None,
+}
+
+public struct Node
+{
+    public bool isUsable;
+    public Potion potion;
 }
