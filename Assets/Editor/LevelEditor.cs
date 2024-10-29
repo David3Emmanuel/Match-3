@@ -11,11 +11,6 @@ public class LevelEditor : Editor
         level.width = EditorGUILayout.IntField("Width", level.width);
         level.height = EditorGUILayout.IntField("Height", level.height);
 
-        bool[,] currentLayout = level.Layout;
-
-        if (currentLayout.GetLength(0) != level.width || currentLayout.GetLength(1) != level.height)
-            level.Layout = new bool[level.width, level.height];
-
         for (int y = 0; y < level.height; y++)
         {
             EditorGUILayout.BeginHorizontal();
@@ -26,5 +21,6 @@ public class LevelEditor : Editor
 
         if (GUI.changed)
             EditorUtility.SetDirty(level);
+        AssetDatabase.SaveAssetIfDirty(level);
     }
 }

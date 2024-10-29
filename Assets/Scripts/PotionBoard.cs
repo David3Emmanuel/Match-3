@@ -54,9 +54,6 @@ public class PotionBoard : MonoBehaviour
 
     void InitializeBoard()
     {
-        Debug.Log(level);
-        Debug.Log(level == null);
-
         Nodes = new Node[level.width, level.height];
         spacingX = (float)(level.width - 1) / 2;
         spacingY = (float)(level.height - 1) / 2;
@@ -64,7 +61,7 @@ public class PotionBoard : MonoBehaviour
         for (int y = 0; y < level.height; y++)
             for (int x = 0; x < level.width; x++)
             {
-                if (level.Layout[x, y])
+                if (level.Layout[x, level.height - y - 1])
                 {
                     Nodes[x, y] = new Node();
                 }
