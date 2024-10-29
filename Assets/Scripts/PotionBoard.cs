@@ -5,19 +5,24 @@ using UnityEngine;
 public class PotionBoard : MonoBehaviour
 {
     public Level level;
-    public GameObject[] potions;
-    public float refillDelay = 0f;
-    public float refillSpeed = 5.0f;
-    public float cascadeSpeed = 3.0f;
-    public float swapDuration = 0.1f;
+    [SerializeField] private GameObject[] potions;
+    [SerializeField] private float refillDelay = 0f;
+    [SerializeField] private float refillSpeed = 5.0f;
+    [SerializeField] private float cascadeSpeed = 3.0f;
+    [SerializeField] private float swapDuration = 0.1f;
 
-    // Public properties
     public Node[,] Nodes { get; private set; }
     public static PotionBoard Instance { get; private set; }
-    public Potion SelectedPotion { get; set; }
+    private Potion selectedPotion;
+    public Potion SelectedPotion {
+        get { return selectedPotion; }
+        set {
+            AudioManager.Instance.PlaySFX(AudioManager.Instance.selectSFX);
+            selectedPotion = value;
+        }
+    }
     public bool IsProcessing => isMatching || isCascading || IsMoving || IsSpawning;
 
-    // Private properties
     private bool isMatching, isCascading;
     private float spacingX, spacingY;
     bool IsMoving
@@ -259,6 +264,8 @@ public class PotionBoard : MonoBehaviour
 
     void SwapPotions(Potion potion1, Potion potion2)
     {
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.swapSFX);
+
         Node selectedNode = Nodes[potion1.xIndex, potion1.yIndex];
         Node targetNode = Nodes[potion2.xIndex, potion2.yIndex];
 
@@ -324,6 +331,7 @@ public class PotionBoard : MonoBehaviour
 
     IEnumerator RemoveMatchedPotions()
     {
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.matchSFX);
         isCascading = true;
         foreach (Potion potion in GetMatchedPotions())
         {
@@ -391,6 +399,7 @@ public class PotionBoard : MonoBehaviour
         while (isCascading) yield return null;
         yield return potion.MoveWithSpeed(targetPosition, refillSpeed);
         potion.HasSpawned = true;
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.dropSFX);
     }
 
     int FindIndexOfLowestNull(int x)
@@ -403,26 +412,4 @@ public class PotionBoard : MonoBehaviour
         return level.height;
     }
     #endregion
-}
-
-public struct MatchResult
-{
-    public List<Potion> connectedPotions;
-    public MatchDirection direction;
-}
-
-public enum MatchDirection
-{
-    Vertical,
-    Horizontal,
-    LongVertical,
-    LongHorizontal,
-    Super,
-    None,
-}
-
-public struct Node
-{
-    public bool isUsable;
-    public Potion potion;
 }
