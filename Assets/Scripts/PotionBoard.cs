@@ -6,6 +6,7 @@ public class PotionBoard : MonoBehaviour
 {
     public Level level;
     [SerializeField] private GameObject[] potions;
+    [SerializeField] private GameObject cobwebs;
     [SerializeField] private GameObject selectedBorder;
     [SerializeField] private float refillDelay = 0f;
     [SerializeField] private float refillSpeed = 5.0f;
@@ -77,15 +78,19 @@ public class PotionBoard : MonoBehaviour
         for (int y = 0; y < level.height; y++)
             for (int x = 0; x < level.width; x++)
             {
+                Vector2 position = new Vector2(x - spacingX, y - spacingY);
+
                 if (level.Layout[x, level.height - y - 1])
                 {
                     Nodes[x, y] = new Node();
+                    GameObject newCobwebs = Instantiate(cobwebs, transform);
+                    newCobwebs.transform.localPosition = position;
                 }
                 else
                 {
                     int randomIndex = Random.Range(0, potions.Length);
                     GameObject newPotionObject = Instantiate(potions[randomIndex], transform);
-                    newPotionObject.transform.localPosition = new Vector2(x - spacingX, y - spacingY);
+                    newPotionObject.transform.localPosition = position;
 
                     Potion newPotion = newPotionObject.GetComponent<Potion>();
                     newPotion.SetIndex(x, y);

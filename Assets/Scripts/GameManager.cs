@@ -66,6 +66,7 @@ public class GameManager : MonoBehaviour
             yield return null;
 
         GameOver = true;
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.winSFX);
         victoryPanel.SetActive(true);
         winSummaryText.text = $"You won in {moves} moves";
     }
