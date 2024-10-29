@@ -18,7 +18,12 @@ public class GameManager : MonoBehaviour
         get { return gameOver; }
         private set
         {
-            AudioManager.Instance.StopMusic();
+            if (value)
+            {
+                AudioManager.Instance.StopMusic();
+                PotionBoard.Instance.gameObject.SetActive(false);
+                backgroundPanel.SetActive(true);
+            }
             gameOver = value;
         }
     }
@@ -61,8 +66,6 @@ public class GameManager : MonoBehaviour
             yield return null;
 
         GameOver = true;
-        AudioManager.Instance.PlaySFX(AudioManager.Instance.loseSFX);
-        backgroundPanel.SetActive(true);
         victoryPanel.SetActive(true);
         winSummaryText.text = $"You won in {moves} moves";
     }
@@ -73,7 +76,7 @@ public class GameManager : MonoBehaviour
             yield return null;
 
         GameOver = true;
-        backgroundPanel.SetActive(true);
+        AudioManager.Instance.PlaySFX(AudioManager.Instance.loseSFX);
         losePanel.SetActive(true);
         loseSummaryText.text = $"{points} / {goal}\nSo close!!";
     }

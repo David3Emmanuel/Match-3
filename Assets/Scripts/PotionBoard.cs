@@ -6,6 +6,7 @@ public class PotionBoard : MonoBehaviour
 {
     public Level level;
     [SerializeField] private GameObject[] potions;
+    [SerializeField] private GameObject selectedBorder;
     [SerializeField] private float refillDelay = 0f;
     [SerializeField] private float refillSpeed = 5.0f;
     [SerializeField] private float cascadeSpeed = 3.0f;
@@ -20,6 +21,14 @@ public class PotionBoard : MonoBehaviour
         set
         {
             AudioManager.Instance.PlaySFX(AudioManager.Instance.selectSFX);
+            if (value)
+            {
+                selectedBorder.SetActive(true);
+                selectedBorder.transform.position = value.transform.position;
+            }
+            else
+                selectedBorder.SetActive(false);
+
             selectedPotion = value;
         }
     }
@@ -48,9 +57,16 @@ public class PotionBoard : MonoBehaviour
         }
     }
 
-    void Awake() { Instance = this; }
+    void Awake()
+    {
+        Instance = this;
+        selectedBorder.SetActive(false);
+    }
 
-    void Start() { InitializeBoard(); }
+    void Start()
+    {
+        InitializeBoard();
+    }
 
     void InitializeBoard()
     {
@@ -302,15 +318,19 @@ public class PotionBoard : MonoBehaviour
 
         isMatching = true;
         if (CheckBoard())
+        {
+            SelectedPotion = null;
+            isMatching = false;
             yield return RemoveAndRefill();
+        }
         else
         {
             revertSwap();
+            SelectedPotion = null;
+            isMatching = false;
             yield break;
         }
 
-        isMatching = false;
-        SelectedPotion = null;
         OrderPotionsInHierarchy();
     }
 
@@ -363,7 +383,8 @@ public class PotionBoard : MonoBehaviour
         while (y + yOffSet < level.height && Nodes[x, y + yOffSet].potion == null && Nodes[x, y + yOffSet].isUsable)
             yOffSet++;
 
-        if (y + yOffSet == level.height) SpawnPotionAtTop(x);
+        if (y + yOffSet == level.height || !Nodes[x, y + yOffSet].isUsable)
+            SpawnPotionAtTop(x);
         else
         {
             Potion potionAbove = Nodes[x, y + yOffSet].potion;
