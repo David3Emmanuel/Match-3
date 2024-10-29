@@ -8,11 +8,10 @@ public class GameManager : MonoBehaviour
 {
     public GameObject backgroundPanel, victoryPanel, losePanel;
     public TextMeshProUGUI pointsText, movesText, winSummaryText, loseSummaryText;
-    public int moves, goal;
+    public Level[] levels;
 
+    public Level CurrentLevel { get; private set; }
     public static GameManager Instance { get; private set; }
-    private int points;
-    private bool gameOver;
     public bool GameOver
     {
         get { return gameOver; }
@@ -28,20 +27,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Awake() { Instance = this; }
+    private int points, moves;
+    private bool gameOver;
+
+
+    void Awake()
+    {
+        Instance = this;
+        CurrentLevel = levels[PlayerPrefs.GetInt("Level", 0)];
+    }
 
     void Start()
     {
         AudioManager.Instance.PlayLevelMusic();
-        Initialize(moves, goal);
-    }
 
-    public void Initialize(int moves, int goal)
-    {
-        this.moves = moves;
-        this.goal = goal;
+
+        moves = CurrentLevel.moves;
         movesText.text = "Moves: " + moves;
-        pointsText.text = points + " / " + goal;
+        pointsText.text = points + " / " + CurrentLevel.goal;
     }
 
     public void UseMove()
@@ -55,9 +58,9 @@ public class GameManager : MonoBehaviour
     public void AddPoints(int pointsGained)
     {
         points += pointsGained;
-        pointsText.text = points + " / " + goal;
+        pointsText.text = points + " / " + CurrentLevel.goal;
 
-        if (points >= goal) StartCoroutine(WinGame());
+        if (points >= CurrentLevel.goal) StartCoroutine(WinGame());
     }
 
     IEnumerator WinGame()
@@ -79,11 +82,17 @@ public class GameManager : MonoBehaviour
         GameOver = true;
         AudioManager.Instance.PlaySFX(AudioManager.Instance.loseSFX);
         losePanel.SetActive(true);
-        loseSummaryText.text = $"{points} / {goal}\nSo close!!";
+        loseSummaryText.text = $"{points} / {CurrentLevel.goal}\nSo close!!";
     }
 
     public void OnWinGame()
     {
+        int nextLevel = PlayerPrefs.GetInt("Level", 0) + 1;
+        if (nextLevel < levels.Length)
+            PlayerPrefs.SetInt("Level", nextLevel);
+        else
+            PlayerPrefs.SetInt("Level", 0);
+
         AudioManager.Instance.PlaySFX(AudioManager.Instance.clickSFX);
         SceneManager.LoadScene(0);
     }

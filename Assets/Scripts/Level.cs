@@ -6,10 +6,13 @@ using UnityEngine;
 [CreateAssetMenu]
 public class Level : ScriptableObject, ISerializationCallbackReceiver
 {
-    public int width;
-    public int height;
+    public int width = 6;
+    public int height = 8;
+    public int moves = 10;
+    public int goal = 30;
     private bool[,] layout;
     public SerializableLayout serializedLayout;
+    public bool showLayout;
 
     public bool[,] Layout
     {

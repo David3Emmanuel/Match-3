@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PotionBoard : MonoBehaviour
 {
-    public Level level;
     [SerializeField] private GameObject[] potions;
     [SerializeField] private GameObject cobwebs;
     [SerializeField] private GameObject selectedBorder;
@@ -16,6 +15,7 @@ public class PotionBoard : MonoBehaviour
     public Node[,] Nodes { get; private set; }
     public static PotionBoard Instance { get; private set; }
     private Potion selectedPotion;
+    private Level level;
     public Potion SelectedPotion
     {
         get { return selectedPotion; }
@@ -58,6 +58,7 @@ public class PotionBoard : MonoBehaviour
         }
     }
 
+
     void Awake()
     {
         Instance = this;
@@ -66,6 +67,7 @@ public class PotionBoard : MonoBehaviour
 
     void Start()
     {
+        level = GameManager.Instance.CurrentLevel;
         InitializeBoard();
     }
 
@@ -78,7 +80,7 @@ public class PotionBoard : MonoBehaviour
         for (int y = 0; y < level.height; y++)
             for (int x = 0; x < level.width; x++)
             {
-                Vector2 position = new Vector2(x - spacingX, y - spacingY);
+                Vector2 position = new(x - spacingX, y - spacingY);
 
                 if (level.Layout[x, level.height - y - 1])
                 {
@@ -249,7 +251,7 @@ public class PotionBoard : MonoBehaviour
         while (x >= 0 && x < level.width && y >= 0 && y < level.height)
         {
             Node node = Nodes[x, y];
-            if (!node.isUsable) break;
+            if (!node.isUsable || node.potion == null) break;
             if (!node.potion.IsMatched && node.potion.potionType == potion.potionType)
             {
                 connectedPotions.Add(node.potion);

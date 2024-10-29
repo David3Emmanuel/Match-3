@@ -1632,8 +1632,12 @@ MonoBehaviour:
   movesText: {fileID: 319523163}
   winSummaryText: {fileID: 148800575}
   loseSummaryText: {fileID: 2000477226}
-  moves: 10
-  goal: 30
+  levels:
+  - {fileID: 11400000, guid: cbc72424c01300146a8a17b2f766e768, type: 2}
+  - {fileID: 11400000, guid: 217ae8bd118301849b24b77153f00c03, type: 2}
+  - {fileID: 11400000, guid: 5264589264b5b0b48852ffaca0294ef3, type: 2}
+  - {fileID: 11400000, guid: dfa980c093fa20e4e9161a33be3b3505, type: 2}
+  - {fileID: 11400000, guid: e4359a73b281b7845a12f1f431a0ed27, type: 2}
 --- !u!4 &806928577
 Transform:
   m_ObjectHideFlags: 0
@@ -2149,7 +2153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525eec478109667479aad1754ce1fad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: {fileID: 11400000, guid: cbc72424c01300146a8a17b2f766e768, type: 2}
   potions:
   - {fileID: 8791860195176064404, guid: f4d9155088874874b9ec556c69f2699b, type: 3}
   - {fileID: 8838379980197889491, guid: 8d1180057010b7442a1f3228ff7a0b90, type: 3}
