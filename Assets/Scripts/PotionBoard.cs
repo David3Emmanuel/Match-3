@@ -436,7 +436,7 @@ public class PotionBoard : MonoBehaviour
     int FindIndexOfLowestNull(int x)
     {
         for (int y = 0; y < level.height; y++)
-            if (Nodes[x, y].potion == null)
+            if (Nodes[x, y].potion == null && Nodes[x, y].isUsable)
                 return y;
 
         Debug.LogError("No null found in column " + x);
