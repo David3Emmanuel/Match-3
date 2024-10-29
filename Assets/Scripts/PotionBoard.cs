@@ -14,9 +14,11 @@ public class PotionBoard : MonoBehaviour
     public Node[,] Nodes { get; private set; }
     public static PotionBoard Instance { get; private set; }
     private Potion selectedPotion;
-    public Potion SelectedPotion {
+    public Potion SelectedPotion
+    {
         get { return selectedPotion; }
-        set {
+        set
+        {
             AudioManager.Instance.PlaySFX(AudioManager.Instance.selectSFX);
             selectedPotion = value;
         }
@@ -52,6 +54,9 @@ public class PotionBoard : MonoBehaviour
 
     void InitializeBoard()
     {
+        Debug.Log(level);
+        Debug.Log(level == null);
+
         Nodes = new Node[level.width, level.height];
         spacingX = (float)(level.width - 1) / 2;
         spacingY = (float)(level.height - 1) / 2;
@@ -59,7 +64,7 @@ public class PotionBoard : MonoBehaviour
         for (int y = 0; y < level.height; y++)
             for (int x = 0; x < level.width; x++)
             {
-                if (level.layout.rows[y].row[x])
+                if (level.Layout[x, y])
                 {
                     Nodes[x, y] = new Node();
                 }

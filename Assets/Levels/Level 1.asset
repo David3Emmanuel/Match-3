@@ -14,13 +14,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 6
   height: 8
-  layout:
-    rows:
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000
-    - row: 000000000000

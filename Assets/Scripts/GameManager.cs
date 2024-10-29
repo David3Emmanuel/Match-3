@@ -13,9 +13,11 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     private int points;
     private bool gameOver;
-    public bool GameOver {
+    public bool GameOver
+    {
         get { return gameOver; }
-        private set {
+        private set
+        {
             AudioManager.Instance.StopMusic();
             gameOver = value;
         }
@@ -23,7 +25,8 @@ public class GameManager : MonoBehaviour
 
     void Awake() { Instance = this; }
 
-    void Start() {
+    void Start()
+    {
         AudioManager.Instance.PlayLevelMusic();
         Initialize(moves, goal);
     }
@@ -75,12 +78,14 @@ public class GameManager : MonoBehaviour
         loseSummaryText.text = $"{points} / {goal}\nSo close!!";
     }
 
-    public void OnWinGame() {
+    public void OnWinGame()
+    {
         AudioManager.Instance.PlaySFX(AudioManager.Instance.clickSFX);
         SceneManager.LoadScene(0);
     }
 
-    public void OnLoseGame() {
+    public void OnLoseGame()
+    {
         AudioManager.Instance.PlaySFX(AudioManager.Instance.clickSFX);
         SceneManager.LoadScene(0);
     }

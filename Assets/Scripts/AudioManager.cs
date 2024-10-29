@@ -8,14 +8,15 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip[] levelBackgroundMusic;
     [SerializeField] private AudioSource SFXAudioSource;
     public AudioClip clickSFX, swapSFX, matchSFX, superMatchSFX, dropSFX, winSFX, loseSFX, selectSFX;
-    public static AudioManager Instance {get; private set;}
+    public static AudioManager Instance { get; private set; }
 
     private AudioSource backgroundAudioSource;
 
     void Awake()
     {
         if (Instance == null) Instance = this;
-        else if (Instance != this) {
+        else if (Instance != this)
+        {
             Destroy(gameObject);
             return;
         }
@@ -37,7 +38,8 @@ public class AudioManager : MonoBehaviour
         backgroundAudioSource.Play();
     }
 
-    public void PlaySFX(AudioClip sfx) {
+    public void PlaySFX(AudioClip sfx)
+    {
         if (sfx != null)
             SFXAudioSource.PlayOneShot(sfx);
     }
