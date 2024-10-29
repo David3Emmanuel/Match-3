@@ -347,8 +347,11 @@ public class PotionBoard : MonoBehaviour
 
         for (int x = 0; x < level.width; x++)
             for (int y = 0; y < level.height; y++)
-                if (Nodes[x, y].potion == null)
+            {
+                Node node = Nodes[x, y];
+                if (node.potion == null && node.isUsable)
                     RefillPotion(x, y);
+            }
 
         while (IsMoving) yield return null;
         isCascading = false;
@@ -357,7 +360,7 @@ public class PotionBoard : MonoBehaviour
     void RefillPotion(int x, int y)
     {
         int yOffSet = 1;
-        while (y + yOffSet < level.height && Nodes[x, y + yOffSet].potion == null)
+        while (y + yOffSet < level.height && Nodes[x, y + yOffSet].potion == null && Nodes[x, y + yOffSet].isUsable)
             yOffSet++;
 
         if (y + yOffSet == level.height) SpawnPotionAtTop(x);
