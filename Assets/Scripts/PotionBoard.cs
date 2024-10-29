@@ -125,8 +125,7 @@ public class PotionBoard : MonoBehaviour
             for (int x = 0; x < level.width; x++)
             {
                 Node node = Nodes[x, y];
-                if (node.isUsable)
-                {
+                if (node.isUsable && node.potion != null)
                     if (!node.potion.IsMatched)
                     {
                         MatchResult matchedPotions = IsConnected(node.potion);
@@ -139,7 +138,6 @@ public class PotionBoard : MonoBehaviour
                                 p.IsMatched = true;
                         }
                     }
-                }
             }
 
         return allMatchedPotions;
